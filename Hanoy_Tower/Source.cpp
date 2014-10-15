@@ -2,10 +2,13 @@
 #include <ctime>
 #include <windows.h>
 #include <conio.h>
+
 using namespace std;
 
 const int field_size = 10;
 int plr_field[field_size][field_size] = { 0 }, npc_field[field_size][field_size] = { 0 };
+HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);//дескриптор вывода
+HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);//дескриптор ввода
 
 void print_field(){
 	for (int i = 0; i <= 2 * field_size; i++)
@@ -39,11 +42,11 @@ void print_field(){
 			else if (i % 2 == 0 && j % 2 == 1) // middle horizontal lines
 				cout << (char)0xC4;
 
-			else if (plr_field[i][j] == 0)
-				cout << '*';
-
+			else if (plr_field[i/2][j/2] == 0)
+				//cout << '*';
+				cout << plr_field[i/2][j/2];
 			else
-				cout << ' ';
+				cout << '*';
 
 
 		}
@@ -51,8 +54,32 @@ void print_field(){
 	}
 }
 
+void InitPlrField()
+{
+	for (int i = 0; i < field_size; i++)
+	{
+		for (int j = 0; j < field_size; j++)
+		{
+			plr_field[i][j] = rand() % 10;
+		}
+	}
+}
+
 
 void main()
 {
+//	srand((int)(time(0)));
+	//COORD c = {25,0};
+	//print_field();
+	//SetConsoleCursorPosition(hOut, c);
 	print_field();
+	InitPlrField();
+	for (int i = 0; i < field_size; i++)
+	{
+		for (int j = 0; j < field_size; j++)
+		{
+			cout << plr_field[i][j] << ' ';
+		}
+		cout << endl;
+	}
 }
