@@ -6,7 +6,7 @@
 using namespace std;
 
 const int FieldSize = 9;
-int FieldPlr[FieldSize][FieldSize] = { 0 }, npc_field[FieldSize][FieldSize] = { 0 };
+int FieldPlr[FieldSize][FieldSize] = { 0 }, FieldNPC[FieldSize][FieldSize] = { 0 };
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);//дескриптор вывода
 HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);//дескриптор ввода
 
