@@ -5,35 +5,52 @@
 
 using namespace std;
 
-const int field_size = 10;
-int plr_field[field_size][field_size] = { 0 }, npc_field[field_size][field_size] = { 0 };
+const int FieldSize = 9;
+int FieldPlr[FieldSize][FieldSize] = { 0 }, npc_field[FieldSize][FieldSize] = { 0 };
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);//дескриптор вывода
 HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);//дескриптор ввода
 
-void print_field(){
-	for (int i = 0; i <= 2 * field_size; i++)
+void print_field(COORD StartPoint = { 0, 0 }){
+
+	SetConsoleCursorPosition(hOut, StartPoint);
+
+	cout << ' ';
+	for (int i = 0; i < FieldSize; i++)
 	{
-		for (int j = 0; j <= 2 * field_size; j++)
+		cout << ' ' << (char)(0x80 + i);
+	}
+
+	StartPoint.Y++;
+	SetConsoleCursorPosition(hOut, StartPoint);
+
+	for (int i = 0; i <= 2 * FieldSize; i++)
+	{
+		for (int j = 0; j <= 2 * FieldSize; j++)
 		{
+			if (i % 2 == 1 && j == 0)
+				cout << i / 2;
+			else if (i % 2 == 0 && j == 0)
+				cout << ' ';
+
 			if (i == 0 && j == 0) // left top corner
 				cout << (char)0xC9;
-			else if (i == 0 && j == 2 * field_size) // right top corner
+			else if (i == 0 && j == 2 * FieldSize) // right top corner
 				cout << (char)0xBB;
-			else if (i == 2 * field_size && j == 0) // left bottom corner
+			else if (i == 2 * FieldSize && j == 0) // left bottom corner
 				cout << (char)0xC8;
-			else if (i == 2 * field_size && j == 2 * field_size) //right bottom corner
+			else if (i == 2 * FieldSize && j == 2 * FieldSize) //right bottom corner
 				cout << (char)0xBC;
 			else if (i == 0 && j % 2 == 0) // middle top 
 				cout << (char)0xD1;
-			else if (i == 2 * field_size && j % 2 == 0) // middle bottom
+			else if (i == 2 * FieldSize && j % 2 == 0) // middle bottom
 				cout << (char)0xCF;
 			else if (i % 2 == 0 && j == 0) // middle left 
 				cout << (char)0xC7;
-			else if (i % 2 == 0 && j == 2 * field_size) // middle right
+			else if (i % 2 == 0 && j == 2 * FieldSize) // middle right
 				cout << (char)0xB6;
-			else if (i == 0 || i == 2 * field_size) // top & bottom line
+			else if (i == 0 || i == 2 * FieldSize) // top & bottom line
 				cout << (char)0xCD;
-			else if (j == 0 || j == 2 * field_size) // left & right line
+			else if (j == 0 || j == 2 * FieldSize) // left & right line
 				cout << (char)0xBA;
 			else if (i % 2 == 0 && j % 2 == 0) // crosshair
 				cout << (char)0xC5;
@@ -42,25 +59,28 @@ void print_field(){
 			else if (i % 2 == 0 && j % 2 == 1) // middle horizontal lines
 				cout << (char)0xC4;
 
-			else if (plr_field[i/2][j/2] == 0)
+			else if (FieldPlr[i / 2][j / 2] != -1)
 				//cout << '*';
-				cout << plr_field[i/2][j/2];
+				cout << FieldPlr[i / 2][j / 2];
 			else
 				cout << '*';
 
 
 		}
-		cout << endl;
+		//cout << endl;
+		StartPoint.Y++;
+		SetConsoleCursorPosition(hOut, StartPoint);
+
 	}
 }
 
 void InitPlrField()
 {
-	for (int i = 0; i < field_size; i++)
+	for (int i = 0; i < FieldSize; i++)
 	{
-		for (int j = 0; j < field_size; j++)
+		for (int j = 0; j < FieldSize; j++)
 		{
-			plr_field[i][j] = rand() % 10;
+			FieldPlr[i][j] = rand() % 10;
 		}
 	}
 }
@@ -68,18 +88,27 @@ void InitPlrField()
 
 void main()
 {
-//	srand((int)(time(0)));
-	//COORD c = {25,0};
-	//print_field();
-	//SetConsoleCursorPosition(hOut, c);
-	print_field();
+	srand((int)(time(0)));
+
+	COORD c1 = { 5, 4 }, c2 = { 37, 4 };
+	CONSOLE_CURSOR_INFO cInfo = { 0, 0 };//структура с настройками курсора 100-размер, 0-невидимый
+	SetConsoleCursorInfo(hOut, &cInfo);
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
 	InitPlrField();
-	for (int i = 0; i < field_size; i++)
+	print_field(c1);
+	print_field(c2);
+
+	SetConsoleTextAttribute(hOut, FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+	for (int i = 0; i < 100; i++)
 	{
-		for (int j = 0; j < field_size; j++)
-		{
-			cout << plr_field[i][j] << ' ';
-		}
-		cout << endl;
+		c1.X = rand() % 70;
+		c1.Y = rand() % 28;
+		SetConsoleCursorPosition(hOut, c1);
+		cout << (char)1;
+		Sleep(150);
 	}
+	c1 = { 0, 27 };
+
+	SetConsoleTextAttribute(hOut, FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
+	SetConsoleCursorPosition(hOut, c1);
 }
